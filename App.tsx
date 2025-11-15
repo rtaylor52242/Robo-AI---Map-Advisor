@@ -4,6 +4,7 @@ import { Message, MessageAuthor, Coordinates } from './types';
 import Header from './components/Header';
 import ChatInput from './components/ChatInput';
 import ChatMessage from './components/ChatMessage';
+import Modal from './components/Modal';
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -16,6 +17,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const chatSession = useRef<Chat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -98,7 +100,7 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white font-sans">
-      <Header />
+      <Header onHelpClick={() => setIsHelpModalOpen(true)} />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map(msg => (
           <ChatMessage key={msg.id} message={msg} />
@@ -118,6 +120,48 @@ const App: React.FC = () => {
         </div>
       )}
       <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+      <Modal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)}>
+        <div className="p-8 bg-gray-900 text-gray-300 h-full overflow-y-auto">
+          <h2 className="text-3xl font-bold text-white mb-6 text-center">How to Use Robo AI</h2>
+          <div className="space-y-6 prose prose-invert prose-lg max-w-none">
+            <p>I'm your AI assistant for exploring the world and finding information. Here's how you can get the most out of our chat:</p>
+            
+            <div>
+              <h3 className="text-cyan-400 font-semibold text-xl">Ask Me Anything!</h3>
+              <p>You can ask local questions or general knowledge questions.</p>
+              <ul className="list-disc pl-5 mt-2 space-y-2">
+                <li>
+                  <strong>For local queries, be specific!</strong> Try things like:
+                  <ul className="list-disc pl-5 mt-1 text-gray-400">
+                    <li>"Find the best-rated pizza places nearby"</li>
+                    <li>"Show me parks within a 10-minute walk"</li>
+                    <li>"Is there a pharmacy open now?"</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>For general knowledge, just ask!</strong> I use Google Search to find up-to-date answers.
+                   <ul className="list-disc pl-5 mt-1 text-gray-400">
+                    <li>"What's the weather like in Tokyo?"</li>
+                    <li>"Summarize the plot of the movie Inception"</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-cyan-400 font-semibold text-xl">Understanding the Response</h3>
+              <p>For many answers, I'll provide <span className="font-mono bg-gray-700 px-2 py-1 rounded-md text-sm">Sources</span> links. These are direct links to Google Maps or web pages where I found the information, so you can explore further.</p>
+            </div>
+
+            <div>
+              <h3 className="text-cyan-400 font-semibold text-xl">Location Services</h3>
+              <p>This app uses your browser's location to provide accurate local results. If you've disabled it, my local knowledge will be limited. Your location is not stored or shared.</p>
+            </div>
+
+            <p className="text-center pt-4 text-gray-400">Ready to start exploring? Close this window and ask your first question!</p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
